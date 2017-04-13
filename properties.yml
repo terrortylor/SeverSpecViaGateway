@@ -1,0 +1,8 @@
+---
+192.168.60.4:
+  user: vagrant
+  password: vagrant
+  gateway_user: bastion
+192.168.60.5:
+  gateway: 192.168.60.4
+  user: jenkins

@@ -1,0 +1,75 @@
+---
+- hosts: all
+  gather_facts: no
+  become: yes
+  pre_tasks:
+    - name: Update apt
+      command: apt-get update
+
+  tasks:
+    - name: Install some packages
+      apt: "name={{ item }} state=present"
+      with_items:
+        - git
+        - curl
+
+- hosts: gateway
+  gather_facts: no
+  become: yes
+
+  tasks:
+    - name: Create bastion user
+      user:
+        name: bastion
+        password: bastion
+        comment: "Dummy account"
+        shell: /bin/bash
+        uid: 1040
+
+    - name: Set authorized key
+      authorized_key:
+        user: bastion
+        state: present
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+    - name: Add host entery to gateway for dummy fat10store
+      lineinfile:
+        dest: /etc/hosts
+        line: '192.168.60.5 fat10store.projectepic.net'
+
+- hosts: server
+  gather_facts: no
+  become: yes
+
+  tasks:
+    - name: Create Jenkins user
+      user:
+        name: jenkins
+        password: jenkins
+        comment: "Dummy account"
+        shell: /bin/bash
+        uid: 1040
+
+    - name: Set authorized key
+      authorized_key:
+        user: jenkins
+        state: present
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+# - hosts: localhost
+#   tasks:
+#     - shell: ssh-keyscan -t rsa gateway
+#       register: rsa_key
+#
+#     - lineinfile:
+#         dest: ~/.ssh/known_hosts
+#         regexp: '^gateway ssh-rsa'
+#         line: "{{ rsa_key.stdout }}"
+#
+#     - shell: ssh-keyscan -t rsa fat10store.projectepic.net
+#       register: rsa_key
+#
+#     - lineinfile:
+#         dest: ~/.ssh/known_hosts
+#         regexp: '^fat10store.projectepic.net ssh-rsa'
+#         line: "{{ rsa_key.stdout }}"
