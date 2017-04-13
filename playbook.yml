@@ -55,21 +55,3 @@
         user: jenkins
         state: present
         key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-
-# - hosts: localhost
-#   tasks:
-#     - shell: ssh-keyscan -t rsa gateway
-#       register: rsa_key
-#
-#     - lineinfile:
-#         dest: ~/.ssh/known_hosts
-#         regexp: '^gateway ssh-rsa'
-#         line: "{{ rsa_key.stdout }}"
-#
-#     - shell: ssh-keyscan -t rsa fat10store.projectepic.net
-#       register: rsa_key
-#
-#     - lineinfile:
-#         dest: ~/.ssh/known_hosts
-#         regexp: '^fat10store.projectepic.net ssh-rsa'
-#         line: "{{ rsa_key.stdout }}"

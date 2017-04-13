@@ -23,6 +23,7 @@ set :ssh_options, options
 
 options[:user] = properties[host]['user']
 options[:password] = properties[host]['password']
+# If a gatway property exists then set up gateway proxy
 if properties[host]['gateway']
   gateway = properties[host]['gateway']
   gateway_user = properties[gateway]['gateway_user']
